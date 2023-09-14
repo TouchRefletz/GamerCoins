@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista de Nomes e Valores</title>
+    <!-- Inclua os SDKs do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.0.0/firebase-database.js"></script>
+</head>
+<body>
+
+<h1>Lista de Nomes e Valores</h1>
+
+<ul id="lista"></ul>
+
+<div>
+    <button id="anterior">Nome Anterior</button>
+    <button id="proximo">Próximo Nome</button>
+    <br>
+    <br>
+    <input type="number" id="novoValor" placeholder="Novo Valor">
+    <button id="alterarValor">Alterar Valor</button>
+    <br><br>
+    <input type="text" id="novoNome" placeholder="Novo Nome">
+    <button id="adicionarNome">Adicionar Nome</button>
+</div>
+
+<script>
+    // Configure o Firebase com suas credenciais
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnNTmvM59Ahx7VEAHL1RXRVcLe7o3h76w",
+        authDomain: "gameficacao---gamercoins.firebaseapp.com",
+        projectId: "gameficacao---gamercoins",
+        storageBucket: "gameficacao---gamercoins.appspot.com",
+        messagingSenderId: "576397449499",
+        appId: "1:576397449499:web:edef2d7053fe3472479bbe"
+    };
+
+    // Inicialize o Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Referência ao banco de dados em tempo real do Firebase
+    const database = firebase.database();
+
+    const listaNomesValores = [
+        { nome: "João", valor: 10 },
+        { nome: "Maria", valor: 20 },
+        { nome: "Carlos", valor: 30 },
+        { nome: "Ana", valor: 40 },
+        { nome: "Pedro", valor: 50 }
+    ];
+
+    let indiceAtual = 0;
+    const lista = document.getElementById("lista");
+    const botaoAnterior = document.getElementById("anterior");
+    const botaoProximo = document.getElementById("proximo");
+    const nomeAtual = document.getElementById("nomeAtual");
+    const novoNomeInput = document.getElementById("novoNome");
+    const adicionarNomeButton = document.getElementById("adicionarNome");
+    const novoValorInput = document.getElementById("novoValor");
+    const alterarValorButton = document.getElementById("alterarValor");
+
+    function exibirNome(indice) {
+        const nomeValor = listaNomesValores[indice];
+        lista.innerHTML = `<p>${nomeValor.nome} <br><br> ${nomeValor.valor}</p>`;
+        nomeAtual.textContent = `Nome Atual: ${nomeValor.nome}`;
+    }
+
+    function adicionarNome() {
+        const novoNome = novoNomeInput.value;
+        if (novoNome) {
+            const novoValor = parseInt(novoValorInput.value);
+            if (!isNaN(novoValor)) {
+                listaNomesValores.push({ nome: novoNome, valor: novoValor });
+                indiceAtual = listaNomesValores.length - 1;
+                exibirNome(indiceAtual);
+                novoNomeInput.value = "";
+                novoValorInput.value = "";
+
+                // Atualize o Firebase com a nova lista
+                database.ref('nomesValores').set(listaNomesValores);
+            }
+        }
+    }
+
+    botaoAnterior.addEventListener("click", () => {
+        if (indiceAtual > 0) {
+            indiceAtual--;
+        } else {
+            indiceAtual = listaNomesValores.length - 1;
+        }
+        exibirNome(indiceAtual);
+    });
+
+    botaoProximo.addEventListener("click", () => {
+        if (indiceAtual < listaNomesValores.length - 1) {
+            indiceAtual++;
+        } else {
+            indiceAtual = 0;
+        }
+        exibirNome(indiceAtual);
+    });
+
+    adicionarNomeButton.addEventListener("click", adicionarNome);
+
+    alterarValorButton.addEventListener("click", () => {
+        const novoValor = parseInt(novoValorInput.value);
+        if (!isNaN(novoValor)) {
+            listaNomesValores[indiceAtual].valor = novoValor;
+            exibirNome(indiceAtual);
+            novoValorInput.value = "";
+
+            // Atualize o Firebase com a lista atualizada
+            database.ref('nomesValores').set(listaNomesValores);
+        }
+    });
+
+    // Recupere a lista do Firebase e atualize quando necessário
+    database.ref('nomesValores').on('value', (snapshot) => {
+        listaNomesValores = snapshot.val() || [];
+        exibirNome(indiceAtual);
+    });
+
+    // Exibe o primeiro nome ao carregar a página
+    exibirNome(indiceAtual);
+</script>
+
+</body>
+</html>
