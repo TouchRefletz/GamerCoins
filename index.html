@@ -26,7 +26,7 @@
 
 <script>
     // Configure o Firebase com suas credenciais
-    const firebaseConfig = {
+   const firebaseConfig = {
         apiKey: "AIzaSyBnNTmvM59Ahx7VEAHL1RXRVcLe7o3h76w",
         authDomain: "gameficacao---gamercoins.firebaseapp.com",
         projectId: "gameficacao---gamercoins",
@@ -41,19 +41,12 @@
     // Referência ao banco de dados em tempo real do Firebase
     const database = firebase.database();
 
-    const listaNomesValores = [
-        { nome: "João", valor: 10 },
-        { nome: "Maria", valor: 20 },
-        { nome: "Carlos", valor: 30 },
-        { nome: "Ana", valor: 40 },
-        { nome: "Pedro", valor: 50 }
-    ];
+    let listaNomesValores = []; // Inicializamos como uma lista vazia
 
     let indiceAtual = 0;
     const lista = document.getElementById("lista");
     const botaoAnterior = document.getElementById("anterior");
     const botaoProximo = document.getElementById("proximo");
-    const nomeAtual = document.getElementById("nomeAtual");
     const novoNomeInput = document.getElementById("novoNome");
     const adicionarNomeButton = document.getElementById("adicionarNome");
     const novoValorInput = document.getElementById("novoValor");
@@ -62,7 +55,6 @@
     function exibirNome(indice) {
         const nomeValor = listaNomesValores[indice];
         lista.innerHTML = `<p>${nomeValor.nome} <br><br> ${nomeValor.valor}</p>`;
-        nomeAtual.textContent = `Nome Atual: ${nomeValor.nome}`;
     }
 
     function adicionarNome() {
